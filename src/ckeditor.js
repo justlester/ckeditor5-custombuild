@@ -33,9 +33,12 @@ import switchTextCaseIcon from '../icons/svgs/switchcase-icon.svg';
 import lowerCaseIcon from '../icons/svgs/lowercase-icon.svg';
 import upperCaseIcon from '../icons/svgs/uppercase-icon.svg';
 import capitalizeIcon from '../icons/svgs/capitalize-icon.svg';
+import imageIcon from '@ckeditor/ckeditor5-core/theme/icons/image.svg';
 import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview';
 import Command from "@ckeditor/ckeditor5-core/src/command";
 import { upperCase, lowerCase, capitalizeCase, toggleCase, getText } from "./utils";
+import MediaFormView from '@ckeditor/ckeditor5-media-embed/src/ui/mediaformview.js';
+//SWITCH TEXT CASE TOOLBAR PLUGIN
 const SwitchTextCaseButtons = [
 	{
 		label: 'Transform Text Switcher',
@@ -129,12 +132,82 @@ class SwitchTextCaseCommand extends Command{
 		});
 	}
 };
+class InsertImage extends Plugin{
+	init(){
+		const editor = this.editor;
+		editor.ui.componentFactory.add( 'insertImage', locale => {
+            const view = new ButtonView( locale );
+            view.set( {
+                label: 'Insert image',
+                icon: imageIcon,
+                tooltip: true
+            });
+            // Callback executed once the image is clicked.
+            view.on( 'execute', () => {
+                const imageUrl = prompt( 'Image URL' );
+                editor.model.change( writer => {
+					if(imageUrl){
+						const imageElement = writer.createElement( 'image', {
+							src: imageUrl
+						});
+						// Insert the image in the current selection location.
+						editor.model.insertContent( imageElement, editor.model.document.selection );
+					} 
+                } );
+            } );
+			return view;
+        } );
+	}
+}
+class inlineImageStyles extends Plugin{
+	init(){
+		const editor = this.editor;
+		// const options = editor.config.get( 'highlight.options' );
+		// console.log('editor configs:',editor.config);
+		// const converterDefinition = {
+		// 	model: {
+		// 		key: 'imageStyle',
+		// 		values: ['alignLeft','alignCenter','alignRight']
+		// 	},
+		// 	view: {
+		// 		alignLeft: {
+		// 			name: 'figure',
+		// 			styles: {
+		// 				'float':'left',
+		// 				'margin':'1em 24px 1em 0px'
+		// 			}
+		// 		},
+		// 		alignCenter: {
+		// 			name: 'figure',
+		// 			styles: {
+		// 				'margin':'1em auto'
+		// 			}
+		// 		},
+		// 		alignRight: {
+		// 			name: 'figure',
+		// 			styles: {
+		// 				'float':'right',
+		// 				'margin':'1em 0px 1em 24px'
+		// 			}
+		// 		}
+		// 	},
+		// 	converterPriority: 'high'
+		// };
+		// editor.conversion.for('downcast').attributeToElement(converterDefinition);
+		// console.log('FROM PLUGIN',editor);
+		// editor.model.change( writer => {
+		// 	writer.setAttribute('test','attrvalue');
+		// });
+	}
+}
 
 
 class Editor extends ClassicEditor {}
 
 // Plugins to include in the build.
 Editor.builtinPlugins = [
+	inlineImageStyles,
+	InsertImage,
 	SwitchTextCase,
 	Autoformat,
 	Autolink,
@@ -182,7 +255,8 @@ Editor.defaultConfig = {
 			'transformTextUpperCase',
 			'capitalizeText',
 			'|',
-			'imageUpload',
+			'insertImage',
+			// 'imageUpload',
 			'mediaEmbed'
 		],
 	},
@@ -195,11 +269,11 @@ Editor.defaultConfig = {
 			'|',
 			'imageTextAlternative'
 		],
-		upload: {
-			panel: {
-				items: [ 'insertImageViaUrl' ]
-			}
-		}
+		// upload: {
+		// 	panel: {
+		// 		items: [ 'insertImageViaUrl' ]
+		// 	}
+		// }
 	},
 	link: {
 		decorators: {
@@ -212,6 +286,10 @@ Editor.defaultConfig = {
 				}
 			}
 		}
+	},
+	wordCount :{
+		displayWords: true,
+		displayCharacters: true
 	},
 	licenseKey: ''
 };

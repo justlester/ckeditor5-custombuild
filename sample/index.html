@@ -7,87 +7,251 @@
 <head>
 	<title>CKEditor 5 ClassicEditor build</title>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui"/>
+	<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet"/>
+	<link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet"/>
+	<link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet"/>
 	<link rel="icon" type="image/png" href="https://c.cksource.com/a/1/logos/ckeditor5.png">
-	<link rel="stylesheet" type="text/css" href="styles.css">
+	<!-- <link rel="stylesheet" type="text/css" href="styles.css"> -->
 </head>
-<body data-editor="ClassicEditor" data-collaboration="false">
-	<header>
-		<div class="centered">
-			<h1><a href="https://ckeditor.com/ckeditor-5/" target="_blank" rel="noopener noreferrer"><img src="https://c.cksource.com/a/1/logos/ckeditor5.svg" alt="CKEditor 5 logo">CKEditor 5</a></h1>
-			<nav>
-				<ul>
-					<li><a href="https://ckeditor.com/docs/ckeditor5/" target="_blank" rel="noopener noreferrer">Documentation</a></li>
-					<li><a href="https://ckeditor.com/" target="_blank" rel="noopener noreferrer">Website</a></li>
-				</ul>
-			</nav>
-		</div>
-	</header>
-	<main>
-		<div class="message">
-			<div class="centered">
-				<h2>CKEditor 5 online builder demo - ClassicEditor build</h2>
-			</div>
-		</div>
-		<div class="centered">
-			<div class="row row-editor">
-				<div class="editor">
-					<h2>Bilingual Personality Disorder</h2>
-					<figure class="image image-style-side"><img src="https://c.cksource.com/a/1/img/docs/sample-image-bilingual-personality-disorder.jpg">
-						<figcaption>One language, one person.</figcaption>
-					</figure>
-					<p>
-						This may be the first time you hear about this made-up disorder but
-						it actually isn’t so far from the truth. Even the studies that were conducted almost half a century show that
-						<strong>the language you speak has more effects on you than you realise</strong>.
-					</p>
-					<p>
-						One of the very first experiments conducted on this topic dates back to 1964.
-						<a href="https://www.researchgate.net/publication/9440038_Language_and_TAT_content_in_bilinguals">In the experiment</a>
-						designed by linguist Ervin-Tripp who is an authority expert in psycholinguistic and sociolinguistic studies,
-						adults who are bilingual in English in French were showed series of pictures and were asked to create 3-minute stories.
-						In the end participants emphasized drastically different dynamics for stories in English and French.
-					</p>
-					<p>
-						Another ground-breaking experiment which included bilingual Japanese women married to American men in San Francisco were
-						asked to complete sentences. The goal of the experiment was to investigate whether or not human feelings and thoughts
-						are expressed differently in <strong>different language mindsets</strong>.
-						<Here>is a sample from the the experiment:</Here>
-					</p>
-					<p>
-						More recent <a href="https://books.google.pl/books?id=1LMhWGHGkRUC">studies</a> show, the language a person speaks affects
-						their cognition, behaviour, emotions and hence <strong>their personality</strong>.
-						This shouldn’t come as a surprise
-						<a href="https://en.wikipedia.org/wiki/Lateralization_of_brain_function">since we already know</a> that different regions
-						of the brain become more active depending on the person’s activity at hand. Since structure, information and especially
-						<strong>the culture</strong> of languages varies substantially and the language a person speaks is an essential element of daily life.
-					</p>
-				</div>
-			</div></div>
-		</div>
-	</main>
-	<footer>
-		<p><a href="https://ckeditor.com/ckeditor-5/" target="_blank" rel="noopener">CKEditor 5</a>
-			– Rich text editor of tomorrow, available today
-		</p>
-		<p>Copyright © 2003-2020,
-			<a href="https://cksource.com/" target="_blank" rel="noopener">CKSource</a>
-			– Frederico Knabben. All rights reserved.
-		</p>
-	</footer>
+<body>
+	<div id="app">
+		<v-app>
+			<v-container fluid>
+				<!-- <v-row>
+					<v-col cols="6"> -->
+						<v-card>
+							<v-container fluid>
+								<ckeditor5-texteditor v-model="draft_content"></ckeditor5-texteditor>
+							</v-container>
+						</v-card>
+					<!-- </v-col>
+					<v-col cols="6">
+						<v-card>
+							<v-card-text v-html="editorData"></v-card-text> 
+						</v-card>
+					</v-col>
+				</v-row> -->
+			</v-container>
+		</v-app>
+	</div>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
 	<script src="../build/ckeditor.js"></script>
-	<script>ClassicEditor
+	<script src="../build/vue-ckeditor.js"></script>
+	<script>
+		Vue.component('ckeditor5-texteditor',{
+			template: /*html*/`
+				<v-input 
+					class="cke5txteditor-v-input"
+					:value="editingtData"
+					:required="required"
+					:rules="rules"
+					:disabled="disabled">
+					<div style="width:100%;">
+						<div class="cke5txteditor-border">
+							<ckeditor ref="texteditorTarget" :key="refreshEditorComponent" :editor="editor" v-model="editingtData" @ready="onEditorReady" @input="onEditorInput"></ckeditor>
+						</div>
+						<div class="d-flex justify-end">
+							<div class="pa-1 pa-2"> 
+								Paragraph:{{paragraphCount}}, Words: {{wordCount}}, Characters: {{characterCount}}
+							</div>
+						</div>
+					</div>
+				</v-input>
+			`,
+			created() {
+				var css = `
+					.cke5txteditor-v-input.error--text  .cke5txteditor-border{
+						border: 2px solid;
+					}
+					.cke5txteditor-v-input .ck-editor__editable_inline{
+                        min-height: 100px;
+                    }
+				`;
+				style = document.getElementById('ckeditor5-texteditor-component-styles') || document.createElement('style'),
+				head = document.head || document.getElementsByTagName('head')[0];
+				head.appendChild(style);
+				style.type = 'text/css';
+				style.setAttribute('id','ckeditor5-texteditor-component-styles');
+				if(style.styleSheet){
+					style.styleSheet.cssText = css;
+				}else {
+					style.appendChild(document.createTextNode(css));
+				}
+			},
+			props: ['value','required','rules','disabled'],
+			components: {
+				ckeditor: CKEditor.component
+			},
+			data(){
+				return {
+					editor: ClassicEditor,
+					editingtData: null,
+					paragraphCount: 0,
+					characterCount: 0,
+					wordCount: 0,
+					refreshEditorComponent: false,
+				}
+			},  
+			computed: {
+				editorData: {
+					get: function(){
+						return this.value ? this.value : '';
+					},
+					set:function(value){
+						this.$emit('input',value);
+					}
+				},
+			},
+			mounted() {
+				// this.editorData;
+			},
+			watch: {
+				editingtData: function(val){
+					console.log('NEW DATA FOR TEXT EDITOR',val);
+					this.editorData = val;
+				},
+			},
+			methods: {
+				onEditorReady(editor){    
+					console.log('CKEDITOR TEXTEDITOR READY',editor);  
+					var that = this;
+					var wordCountPlugin = editor.plugins.get( 'WordCount' );
+					this.characterCount = wordCountPlugin.characters;
+					this.wordCount = wordCountPlugin.words;
+					console.log(editor.model.document.selection.getFirstPosition());
+					wordCountPlugin.on( 'update', ( evt, stats ) => {
+						that.characterCount = stats.characters;
+						that.wordCount = stats.words;
+					} );
+				},
+				countParagraph(text){
+					if(text){
+						var div = document.createElement("div");
+						div.innerHTML = text;
+						var parag = div.getElementsByTagName("p");
+						var count = 0;
+						Array.from(parag).forEach(p=>{
+							if(p.innerText){
+								count += 1;
+							}
+						});
+						div.remove();
+						return count;
+					}else return 0;
+				},
+				onEditorInput(){
+					var that = this;
+					clearTimeout(this.timeoutInstance);
+					this.timeoutInstance = setTimeout(()=>{
+						var div = document.createElement('div');
+						div.classList.add('ck-content');
+						div.innerHTML = this.editorData;
+						Array.from(div.getElementsByTagName('figure')).forEach(figure=>{
+							if(figure.classList.contains('image-style-align-left')){
+								figure.style.float = 'left';
+								figure.style.margin = '1em 24px 1em 0px';
+							}else if(figure.classList.contains('image-style-align-center')){
+								figure.style.margin = '1em auto';
+							}else if(figure.classList.contains('image-style-align-right')){
+								figure.style.float = 'right';
+								figure.style.margin = '1em 0px 1em 24px';
+							}
+							var image = figure.getElementsByTagName('img');
+							if(image.length){
+								image[0].style.width = '100%';
+							}
+							var caption = figure.getElementsByTagName('figcaption');
+							if(caption.length){
+								caption[0].style.textAlign = 'center';
+								caption[0].style.fontSize = '.75em';
+							}
+						});
+						that.editorData = div.innerHTML;
+						div.remove();
+						console.log('done performing');
+					},1000);
+					this.paragraphCount = this.countParagraph(this.editorData);
+				},
+				refreshEditor(){
+					this.refreshEditorComponent = !this.refreshEditorComponent 
+				}
+			},
+		});
+	</script>
+	<script>
+		const app = new Vue({
+			el: '#app',
+			vuetify: new Vuetify(),
+			data() {
+				return{
+					draft_content: `<h2>Bilingual Personality Disorder</h2>
+						<figure class="image image-style-align-left" style="width:372px;"><img src="https://c.cksource.com/a/1/img/docs/sample-image-bilingual-personality-disorder.jpg">
+							<figcaption>One language, one person.</figcaption>
+						</figure>
+						<p>
+							This may be the first time you hear about this made-up disorder but
+							it actually isn’t so far from the truth. Even the studies that were conducted almost half a century show that
+							<strong>the language you speak has more effects on you than you realise</strong>.
+						</p>
+						<p>
+							One of the very first experiments conducted on this topic dates back to 1964.
+							<a href="https://www.researchgate.net/publication/9440038_Language_and_TAT_content_in_bilinguals">In the experiment</a>
+							designed by linguist Ervin-Tripp who is an authority expert in psycholinguistic and sociolinguistic studies,
+							adults who are bilingual in English in French were showed series of pictures and were asked to create 3-minute stories.
+							In the end participants emphasized drastically different dynamics for stories in English and French.
+						</p>
+						<p>
+							Another ground-breaking experiment which included bilingual Japanese women married to American men in San Francisco were
+							asked to complete sentences. The goal of the experiment was to investigate whether or not human feelings and thoughts
+							are expressed differently in <strong>different language mindsets</strong>.
+							<Here>is a sample from the the experiment:</Here>
+						</p>
+						<p>
+							More recent <a href="https://books.google.pl/books?id=1LMhWGHGkRUC">studies</a> show, the language a person speaks affects
+							their cognition, behaviour, emotions and hence <strong>their personality</strong>.
+							This shouldn’t come as a surprise
+							<a href="https://en.wikipedia.org/wiki/Lateralization_of_brain_function">since we already know</a> that different regions
+							of the brain become more active depending on the person’s activity at hand. Since structure, information and especially
+							<strong>the culture</strong> of languages varies substantially and the language a person speaks is an essential element of daily life.
+						</p>`,
+				}			
+			},
+		});
+	</script>
+	<!-- <script>
+		ClassicEditor
 			.create( document.querySelector( '.editor' ))
 			.then( editor => {
 				window.editor = editor;
-		
-				
-				
-				
-		
-				
-				
-				
+				editor.model.document.on( 'change', () => {
+					var data = editor.getData();
+					var div = document.createElement('div');
+					div.innerHTML = data;
+					Array.from(div.getElementsByTagName('figure')).forEach(figure=>{
+						if(figure.classList.contains('image-style-align-left')){
+							figure.style.float = 'left';
+							figure.style.margin = '1em 24px 1em 0px';
+						}else if(figure.classList.contains('image-style-align-center')){
+							figure.style.margin = '1em auto';
+						}else if(figure.classList.contains('image-style-align-right')){
+							figure.style.float = 'right';
+							figure.style.margin = '1em 0px 1em 24px';
+						}
+						var image = figure.getElementsByTagName('img');
+						if(image){
+							image[0].style.width = '100%';
+						}
+						var caption = figure.getElementsByTagName('figcaption');
+						if(caption){
+							caption[0].style.textAlign = 'center';
+							caption[0].style.fontSize = '.75em';
+						}
+					});
+					console.log(div.innerHTML);
+					div.remove();
+				} );
 			} )
 			.catch( error => {
 				console.error( 'Oops, something went wrong!' );
@@ -95,5 +259,5 @@
 				console.warn( 'Build id: 8lelc6nfzudn-kvol0co6xx3x' );
 				console.error( error );
 			} );
-	</script>
+	</script> -->
 </body>
