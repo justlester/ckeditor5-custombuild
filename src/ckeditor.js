@@ -259,6 +259,7 @@ Editor.defaultConfig = {
 			// 'imageUpload',
 			'mediaEmbed'
 		],
+		shouldNotGroupWhenFull: true
 	},
 	language: 'en',
 	image: {

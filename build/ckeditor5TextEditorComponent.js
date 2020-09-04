@@ -71,14 +71,21 @@ Vue.component('ckeditor5-texteditor',{
             .cke5txteditor-v-input .ck-editor__editable_inline{
                 min-height: 100px;
             }
-            .cke5txteditor-v-input .ck.ck-editor__top.ck-reset_all {
+            /*.cke5txteditor-v-input .ck.ck-editor__top.ck-reset_all {
                 position: static !important;
             }  
-            .ck.ck-sticky-panel__placeholder {
+            .cke5txteditor-v-input .ck.ck-sticky-panel__placeholder {
                 display : none !important;
-            } 
-            .ck.ck-sticky-panel .ck-sticky-panel__content_sticky {
-                position: unset !important;
+                height: auto !important;
+            } */
+            .cke5txteditor-v-input .ck.ck-sticky-panel .ck-sticky-panel__content_sticky {
+                position: static !important;
+                bottom: 0 !important;
+                width:100% !important;
+            }
+            .cke5txteditor-v-input .ck.ck-content{
+                padding-top: 10px;
+                padding-bottom: 10px;
             } 
         `;
         style = document.getElementById('ckeditor5-texteditor-component-styles') || document.createElement('style'),
