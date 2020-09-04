@@ -8,9 +8,9 @@ Vue.component('ckeditor5-texteditor',{
             :disabled="disabled">
             <div style="width:100%;">
                 <v-row no-gutters>
-                    <v-col cols="auto" class="pa-0 text--primary font-weight-bold body-1" v-text="label">
+                    <v-col class="pa-0 text--primary font-weight-bold body-1" v-text="label">
                     </v-col>
-                    <v-col class="d-flex justify-end">
+                    <v-col cols="auto" class="d-flex justify-end">
                         <v-menu offset-y max-height="500px">
                             <template v-slot:activator="{on,attrs}">
                                 <v-btn v-on="on" v-bind="attrs" color="primary" class="font-weight-bold" small text>
