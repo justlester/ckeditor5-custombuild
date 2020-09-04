@@ -71,6 +71,15 @@ Vue.component('ckeditor5-texteditor',{
             .cke5txteditor-v-input .ck-editor__editable_inline{
                 min-height: 100px;
             }
+            .cke5txteditor-v-input .ck.ck-editor__top.ck-reset_all {
+                position: static !important;
+            }  
+            .ck.ck-sticky-panel__placeholder {
+                display : none !important;
+            } 
+            .ck.ck-sticky-panel .ck-sticky-panel__content_sticky {
+                position: unset !important;
+            } 
         `;
         style = document.getElementById('ckeditor5-texteditor-component-styles') || document.createElement('style'),
         head = document.head || document.getElementsByTagName('head')[0];
