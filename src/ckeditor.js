@@ -27,6 +27,7 @@ import TextTransformation from '@ckeditor/ckeditor5-typing/src/texttransformatio
 import TodoList from '@ckeditor/ckeditor5-list/src/todolist';
 import Underline from '@ckeditor/ckeditor5-basic-styles/src/underline.js';
 import WordCount from '@ckeditor/ckeditor5-word-count/src/wordcount.js';
+import Watchdog from '@ckeditor/ckeditor5-watchdog/src/editorwatchdog.js';
 
 import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
 import switchTextCaseIcon from '../icons/svgs/switchcase-icon.svg';
@@ -37,7 +38,6 @@ import imageIcon from '@ckeditor/ckeditor5-core/theme/icons/image.svg';
 import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview';
 import Command from "@ckeditor/ckeditor5-core/src/command";
 import { upperCase, lowerCase, capitalizeCase, toggleCase, getText } from "./utils";
-import MediaFormView from '@ckeditor/ckeditor5-media-embed/src/ui/mediaformview.js';
 //SWITCH TEXT CASE TOOLBAR PLUGIN
 const SwitchTextCaseButtons = [
 	{
@@ -294,4 +294,4 @@ Editor.defaultConfig = {
 	licenseKey: ''
 };
 
-export default Editor;
+export default {Editor, Watchdog};

@@ -23,6 +23,7 @@
     "@ckeditor/ckeditor5-theme-lark": "^21.0.0",
     "@ckeditor/ckeditor5-typing": "^21.0.0",
     "@ckeditor/ckeditor5-upload": "^21.0.0",
+    "@ckeditor/ckeditor5-watchdog": "^22.0.0",
     "@ckeditor/ckeditor5-word-count": "^21.0.0",
     "browserify-css": "^0.15.0",
     "postcss-loader": "^3.0.0",

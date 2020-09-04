@@ -1,8 +1,4 @@
-<!DOCTYPE html><!--
-	Copyright (c) 2014-2020, CKSource - Frederico Knabben. All rights reserved.
-	This file is licensed under the terms of the MIT License (see LICENSE.md).
--->
-
+<!DOCTYPE html>
 <html lang="en" dir="ltr"></html>
 <head>
 	<title>CKEditor 5 ClassicEditor build</title>
@@ -11,181 +7,57 @@
 	<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet"/>
 	<link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet"/>
 	<link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet"/>
-	<link rel="icon" type="image/png" href="https://c.cksource.com/a/1/logos/ckeditor5.png">
-	<!-- <link rel="stylesheet" type="text/css" href="styles.css"> -->
 </head>
 <body>
 	<div id="app">
 		<v-app>
 			<v-container fluid>
-				<!-- <v-row>
-					<v-col cols="6"> -->
-						<v-card>
-							<v-container fluid>
-								<ckeditor5-texteditor v-model="draft_content"></ckeditor5-texteditor>
-							</v-container>
-						</v-card>
-					<!-- </v-col>
-					<v-col cols="6">
-						<v-card>
-							<v-card-text v-html="editorData"></v-card-text> 
-						</v-card>
-					</v-col>
-				</v-row> -->
+				<v-card class="my-2">
+					<v-container fluid>
+						<ckeditor5-texteditor 
+							label="Summary"
+							v-model="testDataToPass"
+							:rules="toggleRequired ? [v=> !!v || 'Content is Required'] : []"
+							:disabled="toggleDisabled"
+							@count-paragraph="onChangeParagraph"
+							@count-sentence="onChangeSentence"
+							@count-word="onChangeWord"
+							@count-char="onChangeChar"
+							show-paragraph-count
+							show-sentence-Count
+							show-word-count
+							show-char-count
+						></ckeditor5-texteditor>
+						<v-btn @click="setVmodel">Set v-model</v-btn>
+						<v-btn @click="clearVmodel">Clear v-model</v-btn>
+						<v-btn :color="toggleDisabled ? 'primary':''" @click="toggleDisabled = !toggleDisabled">Toggle Disabled</v-btn>
+						<v-btn :color="toggleRequired ? 'primary':''" @click="toggleRequired = !toggleRequired">Toggle Rules</v-btn>
+					</v-container>
+				</v-card>
+				<!-- <v-card class="my-2">
+					<v-card-title>Live Changes:</v-card-title>
+					<v-container fluid class="body-2">
+						<div v-html="testDataToPass"></div>
+						<div style="clear:both"></div>
+					</v-container>
+				</v-card> -->
 			</v-container>
 		</v-app>
 	</div>
 	<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
 	<script src="../build/ckeditor.js"></script>
-	<script src="../build/vue-ckeditor.js"></script>
-	<script>
-		Vue.component('ckeditor5-texteditor',{
-			template: /*html*/`
-				<v-input 
-					class="cke5txteditor-v-input"
-					:value="editingtData"
-					:required="required"
-					:rules="rules"
-					:disabled="disabled">
-					<div style="width:100%;">
-						<div class="cke5txteditor-border">
-							<ckeditor ref="texteditorTarget" :key="refreshEditorComponent" :editor="editor" v-model="editingtData" @ready="onEditorReady" @input="onEditorInput"></ckeditor>
-						</div>
-						<div class="d-flex justify-end">
-							<div class="pa-1 pa-2"> 
-								Paragraph:{{paragraphCount}}, Words: {{wordCount}}, Characters: {{characterCount}}
-							</div>
-						</div>
-					</div>
-				</v-input>
-			`,
-			created() {
-				var css = `
-					.cke5txteditor-v-input.error--text  .cke5txteditor-border{
-						border: 2px solid;
-					}
-					.cke5txteditor-v-input .ck-editor__editable_inline{
-                        min-height: 100px;
-                    }
-				`;
-				style = document.getElementById('ckeditor5-texteditor-component-styles') || document.createElement('style'),
-				head = document.head || document.getElementsByTagName('head')[0];
-				head.appendChild(style);
-				style.type = 'text/css';
-				style.setAttribute('id','ckeditor5-texteditor-component-styles');
-				if(style.styleSheet){
-					style.styleSheet.cssText = css;
-				}else {
-					style.appendChild(document.createTextNode(css));
-				}
-			},
-			props: ['value','required','rules','disabled'],
-			components: {
-				ckeditor: CKEditor.component
-			},
-			data(){
-				return {
-					editor: ClassicEditor,
-					editingtData: null,
-					paragraphCount: 0,
-					characterCount: 0,
-					wordCount: 0,
-					refreshEditorComponent: false,
-				}
-			},  
-			computed: {
-				editorData: {
-					get: function(){
-						return this.value ? this.value : '';
-					},
-					set:function(value){
-						this.$emit('input',value);
-					}
-				},
-			},
-			mounted() {
-				// this.editorData;
-			},
-			watch: {
-				editingtData: function(val){
-					console.log('NEW DATA FOR TEXT EDITOR',val);
-					this.editorData = val;
-				},
-			},
-			methods: {
-				onEditorReady(editor){    
-					console.log('CKEDITOR TEXTEDITOR READY',editor);  
-					var that = this;
-					var wordCountPlugin = editor.plugins.get( 'WordCount' );
-					this.characterCount = wordCountPlugin.characters;
-					this.wordCount = wordCountPlugin.words;
-					console.log(editor.model.document.selection.getFirstPosition());
-					wordCountPlugin.on( 'update', ( evt, stats ) => {
-						that.characterCount = stats.characters;
-						that.wordCount = stats.words;
-					} );
-				},
-				countParagraph(text){
-					if(text){
-						var div = document.createElement("div");
-						div.innerHTML = text;
-						var parag = div.getElementsByTagName("p");
-						var count = 0;
-						Array.from(parag).forEach(p=>{
-							if(p.innerText){
-								count += 1;
-							}
-						});
-						div.remove();
-						return count;
-					}else return 0;
-				},
-				onEditorInput(){
-					var that = this;
-					clearTimeout(this.timeoutInstance);
-					this.timeoutInstance = setTimeout(()=>{
-						var div = document.createElement('div');
-						div.classList.add('ck-content');
-						div.innerHTML = this.editorData;
-						Array.from(div.getElementsByTagName('figure')).forEach(figure=>{
-							if(figure.classList.contains('image-style-align-left')){
-								figure.style.float = 'left';
-								figure.style.margin = '1em 24px 1em 0px';
-							}else if(figure.classList.contains('image-style-align-center')){
-								figure.style.margin = '1em auto';
-							}else if(figure.classList.contains('image-style-align-right')){
-								figure.style.float = 'right';
-								figure.style.margin = '1em 0px 1em 24px';
-							}
-							var image = figure.getElementsByTagName('img');
-							if(image.length){
-								image[0].style.width = '100%';
-							}
-							var caption = figure.getElementsByTagName('figcaption');
-							if(caption.length){
-								caption[0].style.textAlign = 'center';
-								caption[0].style.fontSize = '.75em';
-							}
-						});
-						that.editorData = div.innerHTML;
-						div.remove();
-						console.log('done performing');
-					},1000);
-					this.paragraphCount = this.countParagraph(this.editorData);
-				},
-				refreshEditor(){
-					this.refreshEditorComponent = !this.refreshEditorComponent 
-				}
-			},
-		});
-	</script>
+	<script src="../build/ckeditor5TextEditorComponent.js"></script>
 	<script>
 		const app = new Vue({
 			el: '#app',
 			vuetify: new Vuetify(),
 			data() {
 				return{
+					toggleDisabled: false,
+					toggleRequired: false,
+					testDataToPass: '',
+
 					draft_content: `<h2>Bilingual Personality Disorder</h2>
 						<figure class="image image-style-align-left" style="width:372px;"><img src="https://c.cksource.com/a/1/img/docs/sample-image-bilingual-personality-disorder.jpg">
 							<figcaption>One language, one person.</figcaption>
@@ -218,46 +90,27 @@
 						</p>`,
 				}			
 			},
+			methods: {
+				onChangeParagraph(ev){
+					// console.log('CURRENT PARAGRAPH COUNT',ev);
+				},
+				onChangeSentence(ev){
+					// console.log('CURRENT SENTENCE COUNT',ev);
+				},
+				onChangeWord(ev){
+					// console.log('CURRENT WORD COUNT',ev);
+				},
+				onChangeChar(ev){
+					// console.log('CURRENT CHAR COUNT',ev);
+				},
+				setVmodel(){
+					var data = this.draft_content;
+					this.testDataToPass = data;
+				},
+				clearVmodel(){
+					this.testDataToPass = '';
+				}
+			},
 		});
 	</script>
-	<!-- <script>
-		ClassicEditor
-			.create( document.querySelector( '.editor' ))
-			.then( editor => {
-				window.editor = editor;
-				editor.model.document.on( 'change', () => {
-					var data = editor.getData();
-					var div = document.createElement('div');
-					div.innerHTML = data;
-					Array.from(div.getElementsByTagName('figure')).forEach(figure=>{
-						if(figure.classList.contains('image-style-align-left')){
-							figure.style.float = 'left';
-							figure.style.margin = '1em 24px 1em 0px';
-						}else if(figure.classList.contains('image-style-align-center')){
-							figure.style.margin = '1em auto';
-						}else if(figure.classList.contains('image-style-align-right')){
-							figure.style.float = 'right';
-							figure.style.margin = '1em 0px 1em 24px';
-						}
-						var image = figure.getElementsByTagName('img');
-						if(image){
-							image[0].style.width = '100%';
-						}
-						var caption = figure.getElementsByTagName('figcaption');
-						if(caption){
-							caption[0].style.textAlign = 'center';
-							caption[0].style.fontSize = '.75em';
-						}
-					});
-					console.log(div.innerHTML);
-					div.remove();
-				} );
-			} )
-			.catch( error => {
-				console.error( 'Oops, something went wrong!' );
-				console.error( 'Please, report the following error on https://github.com/ckeditor/ckeditor5/issues with the build id and the error stack trace:' );
-				console.warn( 'Build id: 8lelc6nfzudn-kvol0co6xx3x' );
-				console.error( error );
-			} );
-	</script> -->
 </body>
