@@ -124,6 +124,8 @@ Vue.component('ckeditor5-texteditor',{
             lastEditorData: '',
             characterCount: 0,
             wordCount: 0,
+
+            delayBeforeEmit: null,
         }
     },  
     computed: {
@@ -259,37 +261,40 @@ Vue.component('ckeditor5-texteditor',{
         },
         initDataChange(){
             this.editorInstance.model.document.on( 'change:data', (e) => {
-                var currentData = this.editorInstance.getData();
-                var div = document.createElement('div');
-                div.innerHTML = currentData;
-                Array.from(div.getElementsByTagName('figure')).forEach(async figure=>{
-                    if(figure.classList.contains('image-style-align-left')){
-                        figure.style.float = 'left';
-                        figure.style.margin = '1em 24px 1em 0px';
-                    }else if(figure.classList.contains('image-style-align-center')){
-                        figure.style.margin = '1em auto';
-                    }else if(figure.classList.contains('image-style-align-right')){
-                        figure.style.float = 'right';
-                        figure.style.margin = '1em 0px 1em 24px';
-                    }
-                    var image = figure.getElementsByTagName('img');
-                    if(image.length){
-                        if(!figure.style.width){
-                            var imageDim = await this.getImageDimensions(image[0].src);
-                            figure.style.width = imageDim.width;
+                clearTimeout(this.delayBeforeEmit);
+                this.delayBeforeEmit = setTimeout(()=>{
+                    var currentData = this.editorInstance.getData();
+                    var div = document.createElement('div');
+                    div.innerHTML = currentData;
+                    Array.from(div.getElementsByTagName('figure')).forEach(async figure=>{
+                        if(figure.classList.contains('image-style-align-left')){
+                            figure.style.float = 'left';
+                            figure.style.margin = '1em 24px 1em 0px';
+                        }else if(figure.classList.contains('image-style-align-center')){
+                            figure.style.margin = '1em auto';
+                        }else if(figure.classList.contains('image-style-align-right')){
+                            figure.style.float = 'right';
+                            figure.style.margin = '1em 0px 1em 24px';
                         }
-                        image[0].style.width = '100%';
-                    }
-                    var captions = figure.getElementsByTagName('figcaption');
-                    Array.from(captions).forEach(cap=>{
-                       cap.style.textAlign = 'center';
-                       cap.style.fontSize = '.75rem';
+                        var image = figure.getElementsByTagName('img');
+                        if(image.length){
+                            if(!figure.style.width){
+                                var imageDim = await this.getImageDimensions(image[0].src);
+                                figure.style.width = imageDim.width;
+                            }
+                            image[0].style.width = '100%';
+                        }
+                        var captions = figure.getElementsByTagName('figcaption');
+                        Array.from(captions).forEach(cap=>{
+                           cap.style.textAlign = 'center';
+                           cap.style.fontSize = '.75rem';
+                        });
                     });
-                });
-                currentData = div.innerHTML;
-                div.remove();  
-                const n = this.lastEditorData = currentData;
-                this.$emit("input", n, e, this.editorInstance);
+                    currentData = div.innerHTML;
+                    div.remove();  
+                    const n = this.lastEditorData = currentData;
+                    this.$emit("input", n, e, this.editorInstance);
+                },700);
             }, 300, {
                 leading: !0
             });
