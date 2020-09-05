@@ -292,6 +292,9 @@ Editor.defaultConfig = {
 		displayWords: true,
 		displayCharacters: true
 	},
+	mediaEmbed: {
+		previewsInData: true
+	},
 	licenseKey: ''
 };
 
