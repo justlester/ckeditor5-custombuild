@@ -250,14 +250,15 @@ Editor.defaultConfig = {
 			'link',
 			'bulletedList',
 			'|',
+			'insertImage',
+			// 'imageUpload',
+			'mediaEmbed',
+			'|',
 			'transformTextSwitcher',
 			'transformTextLowerCase',
 			'transformTextUpperCase',
 			'capitalizeText',
-			'|',
-			'insertImage',
-			// 'imageUpload',
-			'mediaEmbed'
+		
 		],
 		shouldNotGroupWhenFull: true
 	},
