@@ -159,54 +159,12 @@ class InsertImage extends Plugin{
         } );
 	}
 }
-class inlineImageStyles extends Plugin{
-	init(){
-		const editor = this.editor;
-		// const options = editor.config.get( 'highlight.options' );
-		// console.log('editor configs:',editor.config);
-		// const converterDefinition = {
-		// 	model: {
-		// 		key: 'imageStyle',
-		// 		values: ['alignLeft','alignCenter','alignRight']
-		// 	},
-		// 	view: {
-		// 		alignLeft: {
-		// 			name: 'figure',
-		// 			styles: {
-		// 				'float':'left',
-		// 				'margin':'1em 24px 1em 0px'
-		// 			}
-		// 		},
-		// 		alignCenter: {
-		// 			name: 'figure',
-		// 			styles: {
-		// 				'margin':'1em auto'
-		// 			}
-		// 		},
-		// 		alignRight: {
-		// 			name: 'figure',
-		// 			styles: {
-		// 				'float':'right',
-		// 				'margin':'1em 0px 1em 24px'
-		// 			}
-		// 		}
-		// 	},
-		// 	converterPriority: 'high'
-		// };
-		// editor.conversion.for('downcast').attributeToElement(converterDefinition);
-		// console.log('FROM PLUGIN',editor);
-		// editor.model.change( writer => {
-		// 	writer.setAttribute('test','attrvalue');
-		// });
-	}
-}
 
 
 class Editor extends ClassicEditor {}
 
 // Plugins to include in the build.
 Editor.builtinPlugins = [
-	inlineImageStyles,
 	InsertImage,
 	SwitchTextCase,
 	Autoformat,
@@ -284,7 +242,7 @@ Editor.defaultConfig = {
 				label: 'Open in a new tab',
 				defaultValue: true,	
 				attributes: {
-					target: '_blank'
+					target: '_blank',
 				}
 			}
 		}

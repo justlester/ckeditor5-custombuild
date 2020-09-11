@@ -48,7 +48,7 @@ Vue.component('ckeditor5-texteditor',{
                 </div>
                 <div v-if="showParagraphCount || showSentenceCount || showWordCount || showCharCount" class="d-flex justify-end body-2 pa-1 pa-2">
                     <div v-if="showParagraphCount" class="mx-1">
-                        Paragraph: {{paragraphCount}}
+                        Paragraphs: {{paragraphCount}}
                     </div> 
                     <div v-if="showSentenceCount" class="mx-1">
                         Sentences: {{sentenceCount}}
@@ -64,7 +64,7 @@ Vue.component('ckeditor5-texteditor',{
         </v-input>
     `,
     created() {
-        var css = `
+        var css = /*css*/`
             .cke5txteditor-v-input.error--text  .cke5txteditor-border{
                 border: 2px solid;
             }
@@ -234,7 +234,15 @@ Vue.component('ckeditor5-texteditor',{
     watch: {
         editorData(newVal,oldVal){
             newVal !== oldVal && newVal !== this.lastEditorData && this.editorInstance.setData(newVal);
-            // this.findLinks(this.editorData);
+            Array.from(document.querySelectorAll(".cke5txteditor-v-input .ck.ck-content a")).forEach(link=>{
+                link.addEventListener('mouseover',function(event){
+                    var url = link.getAttribute('href');
+                    link.setAttribute('title',url);
+                });
+                link.addEventListener('mouseout',function(event){
+                    link.removeAttribute('title');
+                });
+            });
         },
     },
     methods: {
