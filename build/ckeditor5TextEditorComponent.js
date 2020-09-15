@@ -136,11 +136,14 @@ Vue.component('ckeditor5-texteditor',{
         verifyUrlLinks: {
             type: Boolean,
             default: false,
+        },
+        proxyServerUrl: {
+            type: String,
+            default: ''
         }   
     },
     data(){
         return {
-            proxyUrl: '',
             editorInstance: null,
             lastEditorData: '',
             characterCount: 0,
@@ -236,7 +239,6 @@ Vue.component('ckeditor5-texteditor',{
         }
     },
     mounted() {
-        this.proxyUrl = 'https://archintelchassis4-proxy-server.herokuapp.com/';
         this.initTextEditor();
     },
     watch: {
@@ -381,6 +383,14 @@ Vue.component('ckeditor5-texteditor',{
                 });
             },700);
         },
+        revalidateLinks(){
+            this.foundLinks.forEach(item=>{
+                item.isVerifying = true;
+                item.isExists = null;
+                item.requestVerify = null;
+            });
+            this.verifyFoundLinks(this.foundLinks);
+        },  
         checkUrlExists(url,callback){
             var that = this;
             var xhr = new XMLHttpRequest();
@@ -389,7 +399,7 @@ Vue.component('ckeditor5-texteditor',{
                     callback(xhr.status == 200);
                 }
             }
-            xhr.open("HEAD",that.proxyUrl+url, true); 
+            xhr.open("HEAD",that.proxyServerUrl+url, true); 
             xhr.send(null);
             return xhr;
         },

@@ -72,7 +72,8 @@
 									</template>
 									<template v-else>
 										<v-icon v-if="item.isExists" color="success">fas fa-link</v-icon>
-										<v-icon v-else color="red">fas fa-unlink</v-icon>
+										<v-icon v-else-if="item.isExists" color="red">fas fa-unlink</v-icon>
+										<v-icon v-else>fas fa-question-circle</v-icon>
 									</template>
 								</v-list-item-avatar>
 								<v-list-item-content>
