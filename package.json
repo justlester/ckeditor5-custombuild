@@ -6,25 +6,25 @@
   "license": "SEE LICENSE IN LICENSE.md",
   "private": true,
   "devDependencies": {
-    "@ckeditor/ckeditor5-autoformat": "^21.0.0",
-    "@ckeditor/ckeditor5-basic-styles": "^21.0.0",
-    "@ckeditor/ckeditor5-dev-utils": "^23.4.0",
-    "@ckeditor/ckeditor5-dev-webpack-plugin": "^23.4.0",
-    "@ckeditor/ckeditor5-editor-classic": "^21.0.0",
-    "@ckeditor/ckeditor5-essentials": "^21.0.0",
-    "@ckeditor/ckeditor5-heading": "^21.0.0",
-    "@ckeditor/ckeditor5-image": "^21.0.0",
-    "@ckeditor/ckeditor5-link": "^21.0.0",
-    "@ckeditor/ckeditor5-list": "^21.0.0",
-    "@ckeditor/ckeditor5-media-embed": "^21.0.0",
-    "@ckeditor/ckeditor5-paragraph": "^21.0.0",
-    "@ckeditor/ckeditor5-paste-from-office": "^21.0.0",
-    "@ckeditor/ckeditor5-remove-format": "^21.0.0",
-    "@ckeditor/ckeditor5-theme-lark": "^21.0.0",
-    "@ckeditor/ckeditor5-typing": "^21.0.0",
-    "@ckeditor/ckeditor5-upload": "^21.0.0",
+    "@ckeditor/ckeditor5-autoformat": "^22.0.0",
+    "@ckeditor/ckeditor5-basic-styles": "^22.0.0",
+    "@ckeditor/ckeditor5-dev-utils": "^23.5.1",
+    "@ckeditor/ckeditor5-dev-webpack-plugin": "^23.5.1",
+    "@ckeditor/ckeditor5-editor-classic": "^22.0.0",
+    "@ckeditor/ckeditor5-essentials": "^22.0.0",
+    "@ckeditor/ckeditor5-heading": "^22.0.0",
+    "@ckeditor/ckeditor5-image": "^22.0.0",
+    "@ckeditor/ckeditor5-link": "^22.0.0",
+    "@ckeditor/ckeditor5-list": "^22.0.0",
+    "@ckeditor/ckeditor5-media-embed": "^22.0.0",
+    "@ckeditor/ckeditor5-paragraph": "^22.0.0",
+    "@ckeditor/ckeditor5-paste-from-office": "^22.0.0",
+    "@ckeditor/ckeditor5-remove-format": "^22.0.0",
+    "@ckeditor/ckeditor5-theme-lark": "^22.0.0",
+    "@ckeditor/ckeditor5-typing": "^22.0.0",
+    "@ckeditor/ckeditor5-upload": "^22.0.0",
     "@ckeditor/ckeditor5-watchdog": "^22.0.0",
-    "@ckeditor/ckeditor5-word-count": "^21.0.0",
+    "@ckeditor/ckeditor5-word-count": "^22.0.0",
     "browserify-css": "^0.15.0",
     "postcss-loader": "^3.0.0",
     "raw-loader": "^4.0.1",
@@ -36,7 +36,5 @@
   "scripts": {
     "build": "webpack --mode production"
   },
-  "dependencies": {
-    "ckeditor5-letter-case": "^1.0.3"
-  }
+  "dependencies": {}
 }
