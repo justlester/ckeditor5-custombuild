@@ -132,16 +132,23 @@ Vue.component('ckeditor5-texteditor',{
         showCharCount: {
             type: Boolean,
             default: false,
+        },
+        verifyUrlLinks: {
+            type: Boolean,
+            default: false,
         }   
     },
     data(){
         return {
+            proxyUrl: '',
             editorInstance: null,
             lastEditorData: '',
             characterCount: 0,
             wordCount: 0,
+            foundLinks: [],
 
-            delayBeforeEmit: null,
+            delayBeforeEmitInput: null,
+            delayBeforeVerifyLinks: null,
         }
     },  
     computed: {
@@ -229,6 +236,7 @@ Vue.component('ckeditor5-texteditor',{
         }
     },
     mounted() {
+        this.proxyUrl = 'https://archintelchassis4-proxy-server.herokuapp.com/';
         this.initTextEditor();
     },
     watch: {
@@ -243,7 +251,23 @@ Vue.component('ckeditor5-texteditor',{
                     link.removeAttribute('title');
                 });
             });
+            var newLinks = this.getHrefLinksInText(newVal);
+            if(this.verifyUrlLinks){
+                this.verifyFoundLinks(newLinks);
+            }else {
+                this.foundLinks = newLinks;
+            }
         },
+        foundLinks:{
+            deep: true,
+            handler(value){
+                //serialize value
+                value.forEach(item=>{
+                    delete item.requestVerify;
+                });
+                this.$emit('get-links',value);
+            }
+        }
     },
     methods: {
         initTextEditor(){
@@ -285,8 +309,8 @@ Vue.component('ckeditor5-texteditor',{
         },
         initDataChange(){
             this.editorInstance.model.document.on( 'change:data', (e) => {
-                clearTimeout(this.delayBeforeEmit);
-                this.delayBeforeEmit = setTimeout(()=>{
+                clearTimeout(this.delayBeforeEmitInput);
+                this.delayBeforeEmitInput = setTimeout(()=>{
                     var currentData = this.editorInstance.getData();
                     var div = document.createElement('div');
                     div.innerHTML = currentData;
@@ -323,6 +347,52 @@ Vue.component('ckeditor5-texteditor',{
                 leading: !0
             });
         },
+        verifyFoundLinks(newLinks){
+            var that = this;
+            //abort recent verifications
+            this.foundLinks.forEach(item=>{
+                if(item.isVerifying && item.requestVerify){
+                    item.requestVerify.abort();
+                }
+            });
+            //retrieve verified links
+            newLinks.forEach(item=>{
+                var matched = this.foundLinks.filter(x=>x.order==item.order&&x.href==item.href);
+                if(matched.length){
+                    item.isVerifying = matched[0].isVerifying;
+                    item.isExists = matched[0].isExists;
+                    item.requestVerify = null;
+                }
+            });
+            //set found links for status display
+            this.foundLinks = newLinks;
+            //verify link
+            clearTimeout(this.delayBeforeVerifyLinks);
+            this.delayBeforeVerifyLinks = setTimeout(()=>{
+                this.foundLinks.forEach((item,index)=>{
+                    if(!item.isExists){
+                        item.requestVerify = that.checkUrlExists(item.href,function(result){
+                            var newObj = item;
+                            newObj.isExists = result;
+                            newObj.isVerifying = false;
+                            Vue.set(that.foundLinks, index, newObj);
+                        });
+                    }
+                });
+            },700);
+        },
+        checkUrlExists(url,callback){
+            var that = this;
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() { 
+                if (xhr.readyState === 4) {
+                    callback(xhr.status == 200);
+                }
+            }
+            xhr.open("HEAD",that.proxyUrl+url, true); 
+            xhr.send(null);
+            return xhr;
+        },
         getImageDimensions(url){
             return new Promise((resolve,reject)=>{
                 var img = new Image();
@@ -344,6 +414,38 @@ Vue.component('ckeditor5-texteditor',{
                     img.remove();
                 }
             });
+        },
+        getHrefLinksInText(text){
+            if(text){
+                var that = this;
+                var snippet = document.createElement("div");
+                snippet.innerHTML = text;
+                var links = snippet.getElementsByTagName("a");
+                var tempArray = Array.from(links).map((x,i)=>{
+                    var linkObj = {
+                        order: i,
+                        href: x.href,
+                        text: x.innerText,
+                        wordCount: that.getWordCountCustom(x.innerText),
+                    };
+                    if(this.verifyUrlLinks){
+                        linkObj.isVerifying = true;
+                        linkObj.isExists = null;
+                        linkObj.requestVerify = null;
+                    };
+                    return linkObj;
+                });
+                snippet.remove();
+                return tempArray;
+            }else return [];
+        },
+        getWordCountCustom(text){
+            if(text){
+                text = text.replace(/<[^>]*>/g, " ");
+                text = text.replace(/\s+/g, ' ');
+                text = text.trim();
+                return text.split(" ").length
+            } else return 0;
         },
     },
 });

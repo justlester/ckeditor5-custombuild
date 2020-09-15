@@ -5,7 +5,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui"/>
 	<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet"/>
-	<link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet"/>
+	<link href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" rel="stylesheet">
 	<link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet"/>
 </head>
 <body>
@@ -23,6 +23,8 @@
 							@count-sentence="onChangeSentence"
 							@count-word="onChangeWord"
 							@count-char="onChangeChar"
+							@get-links="onGetLinks"
+							:verify-url-links="toggleVerifyLink"
 							show-paragraph-count
 							show-sentence-Count
 							show-word-count
@@ -32,6 +34,7 @@
 						<v-btn @click="clearVmodel">Clear v-model</v-btn>
 						<v-btn :color="toggleDisabled ? 'primary':''" @click="toggleDisabled = !toggleDisabled">Toggle Disabled</v-btn>
 						<v-btn :color="toggleRequired ? 'primary':''" @click="toggleRequired = !toggleRequired">Toggle Rules</v-btn>
+						<v-btn :color="toggleVerifyLink ? 'primary':''" @click="toggleVerifyLink = !toggleVerifyLink">Toggle Verify Links</v-btn>
 					</v-container>
 				</v-card>
 				<v-card class="my-2">
@@ -39,6 +42,8 @@
 					<v-tabs v-model="livechangestab">
 						<v-tab>Source</v-tab>
 						<v-tab>Display</v-tab>
+						<v-tab>Links (Source)</v-tab>
+						<v-tab>Links (Display)</v-tab>
 					</v-tabs>
 					<v-tabs-items v-model="livechangestab">
 						<v-tab-item>
@@ -51,6 +56,31 @@
 								<div v-html="testDataToPass"></div>
 								<div style="clear:both"></div>
 							</v-container>
+						</v-tab-item>
+						<v-tab-item>
+							<v-container fluid class="pa-2 body-2 overflow-auto grey lighten-3">
+								<pre v-for="link in foundLinks" style="white-space: pre-line;">
+									{{link}}
+								</pre>
+							</v-container>
+						</v-tab-item>
+						<v-tab-item>
+							<v-list-item dense v-for="item in foundLinks">
+								<v-list-item-avatar>
+									<template v-if="item.isVerifying">
+										<v-progress-circular size="20" width="2" indeterminate></v-progress-circular>
+									</template>
+									<template v-else>
+										<v-icon v-if="item.isExists" color="success">fas fa-link</v-icon>
+										<v-icon v-else color="red">fas fa-unlink</v-icon>
+									</template>
+								</v-list-item-avatar>
+								<v-list-item-content>
+									<v-list-item-title>
+										<a :href="item.href" v-text="item.href"></a>
+									</v-list-item-title>
+								</v-list-item-content>
+							</v-list-item>
 						</v-tab-item>
 					</v-tabs-items>
 				</v-card>
@@ -72,6 +102,8 @@
 					toggleDisabled: false,
 					toggleRequired: false,
 					testDataToPass: '',
+					toggleVerifyLink: true,
+					foundLinks: [],
 
 					draft_content: `<h2>Bilingual Personality Disorder</h2>
 						<figure class="image image-style-align-left" style="width:372px;"><img src="https://c.cksource.com/a/1/img/docs/sample-image-bilingual-personality-disorder.jpg">
@@ -120,6 +152,10 @@
 				},
 				onChangeChar(ev){
 					// console.log('CURRENT CHAR COUNT',ev);
+				},
+				onGetLinks(ev){
+					console.log(ev);
+					this.foundLinks = ev;
 				},
 				setVmodel(){
 					var data = this.draft_content;
