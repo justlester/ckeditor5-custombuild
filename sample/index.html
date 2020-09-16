@@ -29,6 +29,7 @@
 							show-sentence-Count
 							show-word-count
 							show-char-count
+							proxy-server-url="https://archintelchassis4-proxy-server.herokuapp.com/"
 						></ckeditor5-texteditor>
 						<v-btn @click="setVmodel">Set v-model</v-btn>
 						<v-btn @click="clearVmodel">Clear v-model</v-btn>
@@ -103,7 +104,7 @@
 					toggleDisabled: false,
 					toggleRequired: false,
 					testDataToPass: '',
-					toggleVerifyLink: true,
+					toggleVerifyLink: false,
 					foundLinks: [],
 
 					draft_content: `<h2>Bilingual Personality Disorder</h2>
@@ -155,7 +156,7 @@
 					// console.log('CURRENT CHAR COUNT',ev);
 				},
 				onGetLinks(ev){
-					console.log(ev);
+					// console.log(ev);
 					this.foundLinks = ev;
 				},
 				setVmodel(){

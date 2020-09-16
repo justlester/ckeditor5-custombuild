@@ -152,6 +152,8 @@ Vue.component('ckeditor5-texteditor',{
 
             delayBeforeEmitInput: null,
             delayBeforeVerifyLinks: null,
+
+            innerTextTest: null,
         }
     },  
     computed: {
@@ -244,6 +246,7 @@ Vue.component('ckeditor5-texteditor',{
     watch: {
         editorData(newVal,oldVal){
             newVal !== oldVal && newVal !== this.lastEditorData && this.editorInstance.setData(newVal);
+            this.wordCount = this.getWordCountInTextEditor(newVal);
             Array.from(document.querySelectorAll(".cke5txteditor-v-input .ck.ck-content a")).forEach(link=>{
                 link.addEventListener('mouseover',function(event){
                     var url = link.getAttribute('href');
@@ -269,6 +272,12 @@ Vue.component('ckeditor5-texteditor',{
                 });
                 this.$emit('get-links',value);
             }
+        },
+        characterCount(newVal){
+            this.$emit('count-char',newVal);
+        },
+        wordCount(newVal){
+            this.$emit('count-word',newVal);
         }
     },
     methods: {
@@ -299,14 +308,10 @@ Vue.component('ckeditor5-texteditor',{
             var editor = that.editorInstance;
             var wordCountPlugin = editor.plugins.get( 'WordCount' );
             this.characterCount = wordCountPlugin.characters;
-            this.wordCount = wordCountPlugin.words;
-            this.$emit('count-char',this.characterCount);
-            this.$emit('count-word',this.wordCount);
+            // this.wordCount = wordCountPlugin.words;
             wordCountPlugin.on( 'update', ( evt, stats ) => {
                 that.characterCount = stats.characters;
-                that.wordCount = stats.words;
-                this.$emit('count-char',that.characterCount);
-                this.$emit('count-word',that.wordCount);
+                // that.wordCount = stats.words;
             });
         },
         initDataChange(){
@@ -396,7 +401,9 @@ Vue.component('ckeditor5-texteditor',{
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() { 
                 if (xhr.readyState === 4) {
-                    callback(xhr.status == 200);
+                    var returnValue = 
+                        (xhr.status == 200) ? true : (xhr.status == 404) ? false : null;
+                    callback(returnValue);
                 }
             }
             xhr.open("HEAD",that.proxyServerUrl+url, true); 
@@ -457,5 +464,21 @@ Vue.component('ckeditor5-texteditor',{
                 return text.split(" ").length
             } else return 0;
         },
+        getWordCountInTextEditor(text){
+            if(text){
+                var detectedWords=[], div = document.createElement('div'), div2 = document.createElement('div');
+                var wordMatchRegex = /'?\w[\w']*(?:-\w+)*'?/g;
+                var matchHTMLRegex = /<[^>]*>/g;
+                div.innerHTML = text;
+                Array.from(div.children).forEach(tag=>{
+                    div2.innerHTML = tag.innerHTML.replace(matchHTMLRegex," ");
+                    var foundWords = div2.innerText.match(wordMatchRegex) || [];
+                    detectedWords = [...detectedWords, ...foundWords];
+                });
+                div.remove();
+                div2.remove();
+                return detectedWords.length;
+            } else return 0;
+        }
     },
 });
