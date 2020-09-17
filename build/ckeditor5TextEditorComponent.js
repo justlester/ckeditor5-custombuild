@@ -66,18 +66,11 @@ Vue.component('ckeditor5-texteditor',{
     created() {
         var css = /*css*/`
             .cke5txteditor-v-input.error--text  .cke5txteditor-border{
-                border: 2px solid;
+                border: 3px solid;
             }
             .cke5txteditor-v-input .ck-editor__editable_inline{
                 min-height: 100px;
             }
-            /*.cke5txteditor-v-input .ck.ck-editor__top.ck-reset_all {
-                position: static !important;
-            }  
-            .cke5txteditor-v-input .ck.ck-sticky-panel__placeholder {
-                display : none !important;
-                height: auto !important;
-            } */
             .cke5txteditor-v-input .ck.ck-sticky-panel .ck-sticky-panel__content_sticky {
                 position: static !important;
                 bottom: 0 !important;
@@ -111,7 +104,7 @@ Vue.component('ckeditor5-texteditor',{
         },
         rules: {
             type: Array,
-            default: []
+            default: () => ([])
         },
         disabled: {
             type: Boolean,
