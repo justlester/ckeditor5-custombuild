@@ -5,7 +5,11 @@ Vue.component('ckeditor5-texteditor',{
             :value="editorData"
             :required="required"
             :rules="rules"
-            :disabled="disabled">
+            :disabled="disabled"
+            :hide-details="false"
+            hint="true"
+            persistent-hint
+            @update:error="onUpdateError">
             <div style="width:100%;">
                 <v-row no-gutters>
                     <v-col class="pa-0 text--primary font-weight-bold body-1" v-text="label">
@@ -46,21 +50,26 @@ Vue.component('ckeditor5-texteditor',{
                 <div class="cke5txteditor-border">
                     <textarea ref="texteditorTarget"></textarea>
                 </div>
-                <div v-if="showParagraphCount || showSentenceCount || showWordCount || showCharCount" class="d-flex justify-end body-2 pa-1 pa-2">
-                    <div v-if="showParagraphCount" class="mx-1">
-                        Paragraphs: {{paragraphCount}}
-                    </div> 
-                    <div v-if="showSentenceCount" class="mx-1">
-                        Sentences: {{sentenceCount}}
-                    </div>
-                    <div v-if="showWordCount" class="mx-1">
-                        Words: {{wordCount}}
-                    </div>
-                    <div v-if="showCharCount" class="mx-1">
-                        Characters: {{characterCount}}
-                    </div>
-                </div>
             </div>
+            <template v-slot:message="{message}">
+                <v-row no-gutters>
+                    <v-col class="px-1 pb-1">{{isRulesNotMeet ? message : ''}}</v-col>
+                    <v-col class="px-1 pb-1 body-2 text--primary" v-if="hasCounters" cols="auto">
+                        <span v-if="showParagraphCount" class="mx-1">
+                            Paragraphs: {{paragraphCount}}
+                        </span> 
+                        <span v-if="showSentenceCount" class="mx-1">
+                            Sentences: {{sentenceCount}}
+                        </span>
+                        <span v-if="showWordCount" class="mx-1">
+                            Words: {{wordCount}}
+                        </span>
+                        <span v-if="showCharCount" class="mx-1">
+                            Characters: {{characterCount}}
+                        </span>
+                    </v-col>
+                </v-row>
+            </template>
         </v-input>
     `,
     created() {
@@ -146,10 +155,13 @@ Vue.component('ckeditor5-texteditor',{
             delayBeforeEmitInput: null,
             delayBeforeVerifyLinks: null,
 
-            innerTextTest: null,
+            isRulesNotMeet: false,
         }
     },  
     computed: {
+        hasCounters(){
+            return this.showParagraphCount || this.showSentenceCount || this.showWordCount || this.showCharCount
+        },
         editorData: {
             get: function(){
                 return this.value ? this.value : '';
@@ -282,8 +294,9 @@ Vue.component('ckeditor5-texteditor',{
                 return CKSource.Editor
                     .create( element, config )
                     .then( editor => {
-                        console.log('EDITOR CREATED');
+                        // console.log('EDITOR CREATED');
                         that.editorInstance = editor;
+                        that.editorInstance.setData(that.editorData);
                         that.initWordCount();
                         that.initDataChange();
                         return editor;
@@ -472,6 +485,9 @@ Vue.component('ckeditor5-texteditor',{
                 div2.remove();
                 return detectedWords.length;
             } else return 0;
+        },
+        onUpdateError(ev){
+            this.isRulesNotMeet = ev;
         }
     },
 });
