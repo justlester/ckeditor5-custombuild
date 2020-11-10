@@ -77,6 +77,10 @@ Vue.component('ckeditor5-texteditor',{
             .cke5txteditor-v-input.error--text  .cke5txteditor-border{
                 border: 3px solid;
             }
+            .cke5txteditor-v-input.error--text .ck.ck-content{
+                color: rgb(0, 0, 0);
+                caret-color: rgb(0, 0, 0);
+            }
             .cke5txteditor-v-input .ck-editor__editable_inline{
                 min-height: 100px;
             }
@@ -478,7 +482,12 @@ Vue.component('ckeditor5-texteditor',{
                 div.innerHTML = text;
                 Array.from(div.children).forEach(tag=>{
                     div2.innerHTML = tag.innerHTML.replace(matchHTMLRegex," ");
-                    var foundWords = div2.innerText.match(wordMatchRegex) || [];
+                    var foundWords = (div2.innerText || '').trim().split(/\s+/).map(x=>x.trim())
+                    .filter(x=>{
+                        var match = (x || '').match(wordMatchRegex);
+                        var check = x && (match || '').length > 0;
+                        return check
+                    });
                     detectedWords = [...detectedWords, ...foundWords];
                 });
                 div.remove();
