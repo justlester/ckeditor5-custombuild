@@ -38,6 +38,17 @@ import imageIcon from '@ckeditor/ckeditor5-core/theme/icons/image.svg';
 import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview';
 import Command from "@ckeditor/ckeditor5-core/src/command";
 import { upperCase, lowerCase, capitalizeCase, toggleCase, getText } from "./utils";
+
+import CKEditor from '@ckeditor/ckeditor5-vue2';
+import juice from "juice";
+
+import postcss from "postcss";
+import cssvariables from "postcss-css-variables";
+
+const EditorUtils = {
+	juice,postcss,cssvariables
+}
+
 //SWITCH TEXT CASE TOOLBAR PLUGIN
 const SwitchTextCaseButtons = [
 	{
@@ -257,4 +268,4 @@ Editor.defaultConfig = {
 	licenseKey: ''
 };
 
-export default {Editor, Watchdog};
+export default {Editor, Watchdog, CKEditor,EditorUtils};

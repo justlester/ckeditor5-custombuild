@@ -26,6 +26,7 @@
     "@ckeditor/ckeditor5-watchdog": "^22.0.0",
     "@ckeditor/ckeditor5-word-count": "^22.0.0",
     "browserify-css": "^0.15.0",
+    "postcss-css-variables": "^0.17.0",
     "postcss-loader": "^3.0.0",
     "raw-loader": "^4.0.1",
     "style-loader": "^1.2.1",
@@ -36,5 +37,8 @@
   "scripts": {
     "build": "webpack --mode production"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@ckeditor/ckeditor5-vue2": "^1.0.5",
+    "juice": "^7.0.0"
+  }
 }
