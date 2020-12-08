@@ -16,8 +16,12 @@ Vue.component('ckeditor5-textarea',{
     `,
     created() {
         var css = /*css*/`
-            .cke5txtarea-v-input.error--text  .cke5txtarea-border{
+            .cke5txtarea-v-input.error--text .cke5txtarea-border{
                 border: 3px solid;
+            }
+            .cke5txtarea-v-input.error--text .ck.ck-content{
+                color: rgb(0, 0, 0);
+                caret-color: rgb(0, 0, 0);
             }
             .cke5txtarea-v-input .ck-editor__editable_inline{
                 min-height: 100px;
@@ -120,8 +124,9 @@ Vue.component('ckeditor5-textarea',{
                 return CKSource.Editor
                     .create( element, config )
                     .then( editor => {
-                        console.log('CKEDITOR TEXTAREA CREATED');
+                        // console.log('CKEDITOR TEXTAREA CREATED');
                         that.editorInstance = editor;
+                        that.editorInstance.setData(that.editorData);
                         that.initDataChange();
                         return editor;
                     });

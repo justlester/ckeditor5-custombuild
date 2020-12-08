@@ -288,6 +288,7 @@ Vue.component('ckeditor5-texteditor',{
             wordCountPlugin.on( 'update', ( evt, stats ) => {
                 that.characterCount = stats.characters;
             });
+            this.$emit('ready',editor);
         },
         onEditorChange(value){
             var htmlWithInlineStyles = CKSource.EditorUtils.juice.inlineContent(`<div class="ck-content">${value}</div>`,this.editorStyles);
