@@ -31,8 +31,7 @@ Vue.component('ckeditor5-texteditor',{
                         </v-menu>
                     </v-col>
                 </v-row>
-                </v-card-text>
-                <div class="cke5txteditor-border">
+                <div ref="innerEditorContainer" class="cke5txteditor-border">
                     <ckeditor :editor="editorBuild" v-model="innerEditorValue" @ready="onEditorReady" @input="onEditorChange"></ckeditor>
                 </div>
             </div>
@@ -115,6 +114,7 @@ Vue.component('ckeditor5-texteditor',{
             innerEditorValue: '',
             editorStyles: '',
             foundLinks: [],
+            setupLinkHoverTimeout: null
         }
     },
     computed: {
@@ -255,6 +255,7 @@ Vue.component('ckeditor5-texteditor',{
             var currentData = div.firstChild ? div.firstChild.innerHTML : '';
             var d = this.lastValue = currentData;
             this.$emit('input',d);
+            this.setupLinkHover();
         },
         countParagraphs(){
             var text = this.value;
@@ -398,6 +399,23 @@ Vue.component('ckeditor5-texteditor',{
                 return text.split(" ").length
             } else return 0;
         },
+        setupLinkHover(){
+            clearTimeout(this.setupLinkHoverTimeout);
+            this.setupLinkHoverTimeout = setTimeout(()=>{
+                var editingContent = Array.from(this.$refs.innerEditorContainer.getElementsByClassName("ck-content"))[0]; 
+                if(editingContent){
+                    Array.from(editingContent.getElementsByTagName('a')).forEach(link=>{
+                        link.addEventListener('mouseover',function(event){
+                            var url = link.getAttribute('href');
+                            link.setAttribute('title',url);
+                        });
+                        link.addEventListener('mouseout',function(event){
+                            link.removeAttribute('title');
+                        });
+                    });
+                }
+            },300);
+        }
     },
 
 });
