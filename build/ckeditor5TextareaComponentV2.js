@@ -111,7 +111,7 @@ Vue.component('ckeditor5-textarea',{
     watch: {
         value(newVal,oldVal){
             if(newVal !== oldVal && newVal !== this.lastValue){
-                this.innerEditorValue = newVal;
+                this.innerEditorValue = (newVal || '');
             }
         }
     },

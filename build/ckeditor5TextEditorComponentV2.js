@@ -122,61 +122,13 @@ Vue.component('ckeditor5-texteditor',{
             return this.showParagraphCount || this.showSentenceCount || this.showWordCount || this.showCharCount;
         },
         paragraphCount(){
-            var text = this.value;
-            var count = 0;
-            if(text){
-                var div = document.createElement("div");
-                div.innerHTML = text;
-                var parag = div.getElementsByTagName("p");
-                count = 0;
-                Array.from(parag).forEach((p,i)=>{
-                    if(p.innerText.trim()){
-                        count += 1;
-                    }
-                });
-                div.remove();
-            }
-            this.$emit('count-paragraph',count);
-            return count;
+            return this.countParagraphs();
         },
         sentenceCount(){
-            var text = this.value;
-            var count = 0;
-            if(text){
-                var div = document.createElement("div");
-                div.innerHTML = text;
-                var cleanText = div.textContent || div.innerText || "";
-                var sentencesArray = cleanText.match(/[\w|\)][.?!](\s|$)/g);
-                count = sentencesArray ? sentencesArray.length : 0;
-                div.remove();
-            }
-            this.$emit('count-sentence',count);
-            return count;
+            return this.countSentences();
         },
         wordCount(){
-            var text = this.value;
-            var count = 0;
-            if(text){
-                var detectedWords=[], div = document.createElement('div'), div2 = document.createElement('div');
-                var wordMatchRegex = /'?\w[\w']*(?:-\w+)*'?/g;
-                var matchHTMLRegex = /<[^>]*>/g;
-                div.innerHTML = text;
-                Array.from(div.children).forEach(tag=>{
-                    div2.innerHTML = tag.innerHTML.replace(matchHTMLRegex," ");
-                    var foundWords = (div2.innerText || '').trim().split(/\s+/).map(x=>x.trim())
-                    .filter(x=>{
-                        var match = (x || '').match(wordMatchRegex);
-                        var check = x && (match || '').length > 0;
-                        return check
-                    });
-                    detectedWords = [...detectedWords, ...foundWords];
-                });
-                div.remove();
-                div2.remove();
-                count = detectedWords.length;
-            } 
-            this.$emit('count-word',count);
-            return count;
+            return this.countWords();
         },
         ctrlKey(){
             return navigator.platform.match("Mac") ? '&#8984;':'Ctrl';
@@ -258,8 +210,14 @@ Vue.component('ckeditor5-texteditor',{
     watch: {
         value(newVal,oldVal){
             if(newVal !== oldVal && newVal !== this.lastValue){
-                this.innerEditorValue = newVal;
+                this.innerEditorValue = (newVal || '');
             }
+            var paras = this.countParagraphs();
+            var sents = this.countSentences();
+            var words = this.countWords();
+            this.$emit('count-paragraph',paras);
+            this.$emit('count-sentence',sents);
+            this.$emit('count-word',words);
             var newLinks = this.getHrefLinksInText(newVal);
             if(this.verifyUrlLinks){
                 this.verifyFoundLinks(newLinks);
@@ -297,6 +255,60 @@ Vue.component('ckeditor5-texteditor',{
             var currentData = div.firstChild ? div.firstChild.innerHTML : '';
             var d = this.lastValue = currentData;
             this.$emit('input',d);
+        },
+        countParagraphs(){
+            var text = this.value;
+            var count = 0;
+            if(text){
+                var div = document.createElement("div");
+                div.innerHTML = text;
+                var parag = div.getElementsByTagName("p");
+                count = 0;
+                Array.from(parag).forEach((p,i)=>{
+                    if(p.innerText.trim()){
+                        count += 1;
+                    }
+                });
+                div.remove();
+            }
+            return count;
+        },
+        countSentences(){
+            var text = this.value;
+            var count = 0;
+            if(text){
+                var div = document.createElement("div");
+                div.innerHTML = text;
+                var cleanText = div.textContent || div.innerText || "";
+                var sentencesArray = cleanText.match(/[\w|\)][.?!](\s|$)/g);
+                count = sentencesArray ? sentencesArray.length : 0;
+                div.remove();
+            }
+            return count;
+        },
+        countWords(){
+            var text = this.value;
+            var count = 0;
+            if(text){
+                var detectedWords=[], div = document.createElement('div'), div2 = document.createElement('div');
+                var wordMatchRegex = /'?\w[\w']*(?:-\w+)*'?/g;
+                var matchHTMLRegex = /<[^>]*>/g;
+                div.innerHTML = text;
+                Array.from(div.children).forEach(tag=>{
+                    div2.innerHTML = tag.innerHTML.replace(matchHTMLRegex," ");
+                    var foundWords = (div2.innerText || '').trim().split(/\s+/).map(x=>x.trim())
+                    .filter(x=>{
+                        var match = (x || '').match(wordMatchRegex);
+                        var check = x && (match || '').length > 0;
+                        return check
+                    });
+                    detectedWords = [...detectedWords, ...foundWords];
+                });
+                div.remove();
+                div2.remove();
+                count = detectedWords.length;
+            } 
+            return count;
         },
         getHrefLinksInText(text){
             if(text){

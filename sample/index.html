@@ -17,7 +17,7 @@
 						<ckeditor5-textarea label="Textarea" 
 						:rules="[v=> !!v || 'Comment is Required']"
 						v-model="testTextarea"></ckeditor5-textarea>
-
+						{{wordCount}}
 						<ckeditor5-texteditor 
 							label="Texteditor"
 							ref="textEditorReference"
@@ -32,7 +32,6 @@
 							:verify-url-links="toggleVerifyLink"
 							show-paragraph-count
 							show-sentence-Count
-							show-word-count
 							show-char-count
 							proxy-server-url="https://archintelchassis4-proxy-server.herokuapp.com/"
 						></ckeditor5-texteditor>
@@ -114,6 +113,7 @@
 					toggleVerifyLink: false,
 					foundLinks: [],
 					testTextarea: '',
+					wordCount: 0,
 
 					draft_content: `<h2>Bilingual Personality Disorder</h2>
 						<figure class="image image-style-align-left" style="width:372px;"><img src="https://c.cksource.com/a/1/img/docs/sample-image-bilingual-personality-disorder.jpg">
@@ -158,7 +158,8 @@
 					// console.log('CURRENT SENTENCE COUNT',ev);
 				},
 				onChangeWord(ev){
-					// console.log('CURRENT WORD COUNT',ev);
+					console.log('CURRENT WORD COUNT',ev);
+					this.wordCount= ev;
 				},
 				onChangeChar(ev){
 					// console.log('CURRENT CHAR COUNT',ev);
