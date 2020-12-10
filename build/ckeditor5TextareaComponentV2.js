@@ -117,6 +117,7 @@ Vue.component('ckeditor5-textarea',{
     },
     methods: {
         onEditorReady(editor){
+            this.innerEditorValue = this.value;
             this.$emit('ready',editor);
         },
         onEditorChange(value){

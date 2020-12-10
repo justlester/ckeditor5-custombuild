@@ -246,6 +246,7 @@ Vue.component('ckeditor5-texteditor',{
             wordCountPlugin.on( 'update', ( evt, stats ) => {
                 that.characterCount = stats.characters;
             });
+            this.innerEditorValue = this.value;
             this.$emit('ready',editor);
         },
         onEditorChange(value){
